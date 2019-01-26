@@ -486,11 +486,22 @@ public class AddressBook {
         final ArrayList<String[]> matchedPersons = new ArrayList<>();
         for (String[] person : getAllPersonsInAddressBook()) {
             final Set<String> wordsInName = new HashSet<>(splitByWhitespace(getNameFromPerson(person)));
-            if (!Collections.disjoint(wordsInName, keywords)) {
+            if (ignoreCaseDisjoint(wordsInName, keywords)) {
                 matchedPersons.add(person);
             }
         }
         return matchedPersons;
+    }
+
+    private static boolean ignoreCaseDisjoint(Collection<String> collection1, Collection<String> collection2) {
+        for (String s: collection1) {
+            for (String t: collection2) {
+                if (s.equalsIgnoreCase(t)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -1029,6 +1040,18 @@ public class AddressBook {
      * @param person String array representing the person (used in internal data)
      */
     private static boolean isPersonDataValid(String[] person) {
+
+        if(!isPersonNameValid(person[PERSON_DATA_INDEX_NAME])) {
+            System.out.println(person[PERSON_DATA_INDEX_NAME]  + " is not a valid name.");
+        }
+
+        if(!isPersonPhoneValid(person[PERSON_DATA_INDEX_PHONE])) {
+            System.out.println(person[PERSON_DATA_INDEX_PHONE]  + " is not a valid phone number.");
+        }
+
+        if(!isPersonEmailValid(person[PERSON_DATA_INDEX_EMAIL])) {
+            System.out.println(person[PERSON_DATA_INDEX_EMAIL]  + " is not a valid email.");
+        }
         return isPersonNameValid(person[PERSON_DATA_INDEX_NAME])
                 && isPersonPhoneValid(person[PERSON_DATA_INDEX_PHONE])
                 && isPersonEmailValid(person[PERSON_DATA_INDEX_EMAIL]);
